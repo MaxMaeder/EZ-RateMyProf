@@ -1,24 +1,6 @@
 import nlp from "compromise";
-import type { PlasmoGetInlineAnchorList, PlasmoGetStyle } from "plasmo";
-
-export const getStyle: PlasmoGetStyle = () => {
-  const style = document.createElement("style");
-  style.textContent = `
-    p {
-      color: red;
-    }
-    .rate-inline {
-      color: blue;
-      background-color: yellow;
-    }
-  `;
-  return style;
-};
-
-let el = [];
-export const getInlineAnchorList: PlasmoGetInlineAnchorList = async () => {
-  return el;
-};
+import rateInlineText from "data-text:./rate-inline.html";
+import styleText from "data-text:./style.css";
 
 const PROCEED_KEYWORDS = ["COURSE", "SCHEDULE", "PROFESSOR"];
 const TAG_BLACKLIST = ["STYLE", "SCRIPT", "NOSCRIPT", "BODY"];
@@ -37,8 +19,15 @@ const getTxtTreeWalker = () =>
       : NodeFilter.FILTER_ACCEPT;
   });
 
+const insertStyles = () => {
+  const style = document.createElement("style");
+  style.textContent = styleText;
+  document.body.appendChild(style);
+};
+
 window.addEventListener("load", () => {
   if (!guessShouldProceed()) return;
+  insertStyles();
   console.log("PROCEEDING");
 
   let modifications = [];
@@ -55,15 +44,10 @@ window.addEventListener("load", () => {
     for (const person of people) {
       const endIndex = person.offset.start + person.offset.length;
 
-      res =
-        res.slice(0, endIndex) +
-        "<span class='rate-inline'>hi</span>" +
-        res.slice(endIndex);
-      //console.log(person);
-    }
+      res = res.slice(0, endIndex) + rateInlineText + res.slice(endIndex);
 
-    modifications.push([treeWalker.currentNode.parentElement, res]);
-    el.push(treeWalker.currentNode.parentElement);
+      modifications.push([treeWalker.currentNode.parentElement, res]);
+    }
   }
 
   for (const mod of modifications) {
