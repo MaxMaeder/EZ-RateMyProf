@@ -5,6 +5,12 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@plasmohq/messaging':
+    specifier: ^0.5.0
+    version: 0.5.0(react@18.2.0)
+  compromise:
+    specifier: ^14.9.0
+    version: 14.9.0
   plasmo:
     specifier: 0.77.5
     version: 0.77.5(react-dom@18.2.0)(react@18.2.0)
@@ -1582,6 +1588,18 @@ packages:
     resolution: {integrity: sha512-Auxj4bSPHpJCrSjdyGP+iEiHAdDUAipB6vo51kwEt0vJp3JHiDZ2csoi8kvPZhCmLmPcnRackDTcMF8+KeT3eg==}
     dev: false
 
+  /@plasmohq/messaging@0.5.0(react@18.2.0):
+    resolution: {integrity: sha512-cYF750rguJDvnyJls2IHVAJTPVFtCEaMHMhnRsENfGaNqcRfXVfzwBGOABPg3k1iSBWBYLySh3Ht7QvFSnB3RQ==}
+    peerDependencies:
+      react: ^16.8.6 || ^17 || ^18
+    peerDependenciesMeta:
+      react:
+        optional: true
+    dependencies:
+      nanoid: 4.0.2
+      react: 18.2.0
+    dev: false
+
   /@plasmohq/parcel-bundler@0.5.5:
     resolution: {integrity: sha512-QCMmmfic514CfdXMJ7JMWUnqDzIHKVKyYeqPpUDsXON6JvA1yTmO5mEQSls8+5u/HpocP9QmTskQOHu3RCNX9A==}
     engines: {node: '>= 16.0.0', parcel: '>= 2.7.0'}
@@ -2652,7 +2670,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001510
+      caniuse-lite: 1.0.30001511
       electron-to-chromium: 1.4.447
       node-releases: 2.0.12
       update-browserslist-db: 1.0.11(browserslist@4.21.9)
@@ -2725,8 +2743,8 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /caniuse-lite@1.0.30001510:
-    resolution: {integrity: sha512-z35lD6xjHklPNgjW4P68R30Er5OCIZE0C1bUf8IMXSh34WJYXfIy+GxIEraQXYJ2dvTU8TumjYAeLrPhpMlsuw==}
+  /caniuse-lite@1.0.30001511:
+    resolution: {integrity: sha512-NaWPJawcoedlghN4P7bDNeADD7K+rZaY6V8ZcME7PkEZo/nfOg+lnrUgRWiKbNxcQ4/toFKSxnS4WdbyPZnKkw==}
 
   /capital-case@1.0.4:
     resolution: {integrity: sha512-ds37W8CytHgwnhGGTi88pcPyR15qoNkOpYwmMMfnWqqWgESapLqvDx6huFjQ5vqWSn2Z06173XNA7LtMOeUh1A==}
@@ -2891,6 +2909,15 @@ packages:
       crc32-stream: 4.0.2
       normalize-path: 3.0.0
       readable-stream: 3.6.2
+    dev: false
+
+  /compromise@14.9.0:
+    resolution: {integrity: sha512-sQXVgbZkSIB3JWMFH4GUfAiiEWH8LIy7hoT9U+MB5E0EP22ayWuNRDrxyt+kUdzaQU19KOaCkTTRPzHCYeDylQ==}
+    engines: {node: '>=12.0.0'}
+    dependencies:
+      efrt: 2.7.0
+      grad-school: 0.0.5
+      suffix-thumb: 5.0.2
     dev: false
 
   /concat-map@0.0.1:
@@ -3147,6 +3174,11 @@ packages:
   /dotenv@7.0.0:
     resolution: {integrity: sha512-M3NhsLbV1i6HuGzBUH8vXrtxOk+tWmzWKDMbAVSUp3Zsjm7ywFeuwrUXhmhQyRK1q5B5GGy7hcXPbj3bnfZg2g==}
     engines: {node: '>=6'}
+    dev: false
+
+  /efrt@2.7.0:
+    resolution: {integrity: sha512-/RInbCy1d4P6Zdfa+TMVsf/ufZVotat5hCw3QXmWtjU+3pFEOvOQ7ibo3aIxyCJw2leIeAMjmPj+1SLJiCpdrQ==}
+    engines: {node: '>=12.0.0'}
     dev: false
 
   /electron-to-chromium@1.4.447:
@@ -3454,6 +3486,11 @@ packages:
 
   /graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
+    dev: false
+
+  /grad-school@0.0.5:
+    resolution: {integrity: sha512-rXunEHF9M9EkMydTBux7+IryYXEZinRk6g8OBOGDBzo/qWJjhTxy86i5q7lQYpCLHN8Sqv1XX3OIOc7ka2gtvQ==}
+    engines: {node: '>=8.0.0'}
     dev: false
 
   /graphql-import-macro@1.0.0:
@@ -4240,6 +4277,12 @@ packages:
   /nanoid@3.3.6:
     resolution: {integrity: sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+    dev: false
+
+  /nanoid@4.0.2:
+    resolution: {integrity: sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==}
+    engines: {node: ^14 || ^16 || >=18}
     hasBin: true
     dev: false
 
@@ -5046,6 +5089,10 @@ packages:
       mz: 2.7.0
       pirates: 4.0.6
       ts-interface-checker: 0.1.13
+    dev: false
+
+  /suffix-thumb@5.0.2:
+    resolution: {integrity: sha512-I5PWXAFKx3FYnI9a+dQMWNqTxoRt6vdBdb0O+BJ1sxXCWtSoQCusc13E58f+9p4MYx/qCnEMkD5jac6K2j3dgA==}
     dev: false
 
   /supports-color@5.5.0:
