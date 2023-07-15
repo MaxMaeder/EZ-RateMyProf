@@ -1,35 +1,37 @@
-import fetchAdapter from "@vespaiach/axios-fetch-adapter";
-import axios from "axios";
-import { load } from "cheerio";
+import ratings, { type ITeacherPage } from "@mtucourses/rate-my-professors";
 
 import type { PlasmoMessaging } from "@plasmohq/messaging";
 
-const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-  const name = req.body.name;
+interface ProfessorQuery {
+  schoolName: string;
+  professorName: string;
+}
+
+const handler: PlasmoMessaging.MessageHandler<
+  ProfessorQuery,
+  ITeacherPage
+> = async (req, res) => {
+  const schoolName = req.body.schoolName;
+  const professorName = req.body.professorName;
   console.log("here");
 
-  const requests = axios.create({
-    baseURL: "https://www.ratemyprofessors.com",
-    timeout: 1000,
-    adapter: fetchAdapter
-  });
+  const schools = await ratings.searchSchool(schoolName);
+  if (schools.length === 0) throw new Error("No schools found!");
 
-  const response = await requests.get("/search/professors", {
-    params: { q: name }
-  });
-  console.log(response.request);
-  if (response.status !== 200) throw new Error("Request failed!");
+  const schoolId = schools[0].id;
+  const professors = await ratings.searchTeacher(professorName, schoolId);
 
-  const $ = load(response.data);
-  const href = $(`a[class^="TeacherCard__StyledTeacherCard"]`).html();
-  console.log(response.data);
-  console.log(href);
+  let foundProfessor: ITeacherPage;
+  for (const professor of professors) {
+    try {
+      foundProfessor = await ratings.getTeacher(professor.id);
+    } catch (e) {}
+  }
 
-  //const message = await querySomeApi();
+  if (!foundProfessor)
+    throw new Error("No professor found matching: " + professorName);
 
-  res.send({
-    href
-  });
+  res.send(foundProfessor);
 };
 
 export default handler;
