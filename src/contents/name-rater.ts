@@ -1,17 +1,16 @@
-import type { ITeacherPage } from "@mtucourses/rate-my-professors";
+//const nlp = require("compromise");
 import nlp from "compromise";
 import rateInlineText from "data-text:./rate-inline.html";
 import styleText from "data-text:./style.css";
 import { debounce, isEmpty } from "lodash";
-import type { PlasmoCSUIProps } from "plasmo";
-import type { PlasmoGetOverlayAnchor } from "plasmo";
-import type { FC } from "react";
 
 import { sendToBackground } from "@plasmohq/messaging";
 
+import type { ProfessorPage } from "~background/messages/get-rating";
+
 import { getRGColor, map } from "./util";
 
-const PROCEED_KEYWORDS = ["COURSE", "SCHEDULE", "PROFESSOR"];
+const PROCEED_KEYWORDS = ["course", "schedule", "professor"];
 const TAG_BLACKLIST = ["STYLE", "SCRIPT", "NOSCRIPT", "BODY"];
 
 const guessShouldProceed = () => {
@@ -40,7 +39,7 @@ interface NLPFoundPerson {
   endIndex: number;
 }
 
-const getBadgeHtml = (professor: ITeacherPage): string => {
+const getBadgeHtml = (professor: ProfessorPage): string => {
   const rating = professor.avgRating;
   const color = getRGColor(map(rating, 0, 5, 1, 0));
 
@@ -52,7 +51,63 @@ const getBadgeHtml = (professor: ITeacherPage): string => {
   return text;
 };
 
-let id = "";
+let memo: ProfessorPage[] = [];
+const loadPersonDetails = async (person: NLPFoundPerson) => {
+  //console.log("Top");
+  const name = person.name;
+  const nameParts = name.split(/\s+/);
+
+  let professor: ProfessorPage | undefined;
+  if (nameParts.length === 1) {
+    professor = memo.find(({ firstName, lastName }: ProfessorPage) => {
+      firstName = firstName.toLowerCase();
+      lastName = lastName.toLowerCase();
+
+      console.log(firstName, lastName, nameParts[0]);
+      return firstName === nameParts[0] || lastName === nameParts[0];
+    });
+    console.log("memo", professor, memo);
+    //professor = memo.get(name);
+  }
+
+  if (!professor) {
+    //console.log("before");
+    //try {
+    professor = await sendToBackground({
+      name: "get-rating",
+      body: {
+        schoolName: "UW-Madison",
+        professorName: name
+      }
+    });
+    /*} catch (e) {
+      return;
+    }*/
+    console.log(professor);
+    if (!professor) return;
+    //console.log("after");
+    memo.push(professor);
+  }
+  //console.log("mid");
+
+  let el = person.node.parentElement;
+  let res = person.node.data;
+
+  res =
+    res.slice(0, person.endIndex) +
+    getBadgeHtml(professor) +
+    res.slice(person.endIndex);
+
+  if (el) el.innerHTML = res;
+  console.log("btm");
+};
+
+const formatName = (name: string) => {
+  return name
+    .toLowerCase()
+    .replace(/(\bprof\w*\b\.?|'s|\.)/, "")
+    .trim(); // + ` orig: "${name}"`
+};
 
 const updateProfRatings = async () => {
   console.log("PROCEEDING");
@@ -60,56 +115,33 @@ const updateProfRatings = async () => {
   let people: NLPFoundPerson[] = [];
   const treeWalker = getTxtTreeWalker();
   while (treeWalker.nextNode()) {
-    if (!(treeWalker.currentNode instanceof Text)) continue;
+    const node = treeWalker.currentNode;
+    if (!(node instanceof Text)) continue;
+    if (node.parentElement.classList.contains("rmp-touched")) continue;
 
-    const data = treeWalker.currentNode.data;
-
+    const data = node.data.toString();
     const foundPeople = nlp(data).people().json({ offset: true });
+
     if (foundPeople.length === 0) continue;
 
     for (const foundPerson of foundPeople) {
       const endIndex = foundPerson.offset.start + foundPerson.offset.length;
 
       people.push({
-        node: treeWalker.currentNode,
-        name: foundPerson.text.toLowerCase(),
+        node,
+        name: formatName(foundPerson.text),
         endIndex
       });
     }
+
+    node.parentElement.classList.add("rmp-touched");
   }
 
-  let memo = new Map<string, ITeacherPage>();
-
-  const loadPersonDetails = async (person: NLPFoundPerson) => {
-    const name = person.name;
-
-    let professor: ITeacherPage;
-    if (memo.has(name)) {
-      professor = memo.get(name);
-    } else {
-      professor = await sendToBackground({
-        name: "get-rating",
-        body: {
-          schoolName: "UW-Madison",
-          professorName: name
-        }
-      });
-      memo.set(name, professor);
-    }
-
-    let el = person.node.parentElement;
-    let res = person.node.data;
-
-    res =
-      res.slice(0, person.endIndex) +
-      getBadgeHtml(professor) +
-      res.slice(person.endIndex);
-
-    if (el) el.innerHTML = res;
-  };
+  people.sort((a, b) => b.name.length - a.name.length);
+  console.log(people);
 
   for (const person of people) {
-    loadPersonDetails(person);
+    await loadPersonDetails(person);
   }
 };
 

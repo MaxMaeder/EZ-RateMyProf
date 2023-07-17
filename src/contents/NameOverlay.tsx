@@ -1,95 +1,97 @@
-import { Box, Paper, Text } from "@mantine/core";
-import type { PlasmoCSUIProps, PlasmoGetOverlayAnchor } from "plasmo";
-import type { PlasmoWatchOverlayAnchor } from "plasmo";
-import { type FC, useCallback, useEffect, useState } from "react";
+import { Box, createEmotionCache } from "@mantine/core";
+import { useClickOutside } from "@mantine/hooks";
+import type {
+  PlasmoCSUIProps,
+  PlasmoGetOverlayAnchor,
+  PlasmoGetShadowHostId
+} from "plasmo";
+import { type FC, useEffect, useState } from "react";
+import { useClickAway } from "react-use";
 
-const NameOverlay: FC<PlasmoCSUIProps> = ({ anchor }) => {
-  const [id, setId] = useState("");
+import { OverlayCard } from "~components/OverlayCard";
+import { ThemeProvider } from "~theme";
+
+const styleElement = document.createElement("style");
+
+const styleCache = createEmotionCache({
+  key: "plasmo-mantine-cache",
+  prepend: true,
+  container: styleElement
+});
+
+export const getStyle = () => styleElement;
+
+const NameOverlay: FC<PlasmoCSUIProps> = () => {
+  const [id, setId] = useState<string>("");
+
   const [location, setLocation] = useState([0, 0]);
-  const [hoveredInline, setHoveredInline] = useState(null);
-  console.log(anchor);
+  const [visible, setVisible] = useState(false);
 
-  /*const updateOverlay = useCallback(
-    (event: MouseEvent) => {
-      console.log("hover");
+  /*const ref = useRef(null);
+  useClickAway(ref, () => {
+    console.log("outside");
+    setVisible(false);
+  });*/
+
+  useEffect(() => {
+    const hoverListener = (event: MouseEvent) => {
       const target = event.target;
+
       if (!(target instanceof HTMLElement)) return;
       if (!target.classList.contains("rate-inline")) return;
 
-      if (hoveredInline) hoveredInline.classList.remove("hover");
-      target.classList.add("hover");
-      setHoveredInline(target);
+      setId(target.dataset.id || "");
 
-      let professorId: string = target.dataset.id;
-      setId(professorId);
+      const { left, top } = target.getBoundingClientRect();
+      setLocation([top, left]);
+      setVisible(true);
+    };
 
-      var rect = target.getBoundingClientRect();
-      //console.log(rect.top, rect.right, rect.bottom, rect.left);
+    const scrollListener = () => {
+      setVisible(false);
+    };
 
-      setLocation([(rect.left + rect.right) / 2, rect.top]);
-      console.log(professorId);
-    },
-    [hoveredInline]
-  );
+    document.body.addEventListener("mouseover", hoverListener);
+    document.addEventListener("scroll", scrollListener);
+    document.addEventListener("resize", scrollListener);
 
-  useEffect(() => {
-    const body = document.body;
-    body.addEventListener("mouseover", updateOverlay);
+    return () => {
+      document.body.removeEventListener("mouseover", hoverListener);
+      document.removeEventListener("scroll", scrollListener);
+      document.removeEventListener("resize", scrollListener);
+    };
+  }, []);
 
-    return () => body.removeEventListener("mouseover", updateOverlay);
-  });*/
-
-  /*return (
-    <Box sx={{ position: "relative" }}>
-      <Paper
-        sx={{
-          height: "200px",
-          width: "300px",
-          position: "absolute"
-        }}
-        style={{ top: location[0], left: location[1] }}>
-        hi {id} x: {location[0]} y: {location[1]}
-      </Paper>
-    </Box>
-  );*/
   return (
-    <Paper
-      sx={{
-        height: "200px",
-        width: "300px"
-      }}>
-      hi {id} x: {location[0]} y: {location[1]}
-    </Paper>
+    <ThemeProvider emotionCache={styleCache}>
+      <Box
+        sx={{
+          position: "fixed",
+          top: "0px",
+          left: "0px",
+          right: "0px",
+          bottom: "0px",
+          pointerEvents: "none"
+        }}>
+        {visible && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: Math.min(location[0], window.innerHeight - 270),
+              left: Math.min(location[1] + 30, window.innerWidth - 310),
+              pointerEvents: "auto"
+            }}>
+            <OverlayCard professorId={id} onClose={() => setVisible(false)} />
+          </Box>
+        )}
+      </Box>
+    </ThemeProvider>
   );
 };
 
 export default NameOverlay;
 
 export const getOverlayAnchor: PlasmoGetOverlayAnchor = async () =>
-  document.querySelector(".hover") || document.body;
+  document.body;
 
-let hoveredInline = null;
-document.body.addEventListener("mouseover", (event: MouseEvent) => {
-  const target = event.target;
-  if (!(target instanceof HTMLElement)) return;
-  if (!target.classList.contains("rate-inline")) return;
-
-  console.log("hover");
-  //if (hoveredInline) hoveredInline.classList.remove("hover");
-
-  for (let element of document.querySelectorAll(".hover")) {
-    element.classList.remove("hover");
-  }
-
-  target.classList.add("hover");
-  hoveredInline = target;
-
-  let professorId: string = target.dataset.id;
-  //setId(professorId);
-
-  var rect = target.getBoundingClientRect();
-  //console.log(rect.top, rect.right, rect.bottom, rect.left);
-
-  //setLocation([(rect.left + rect.right) / 2, rect.top]);
-  console.log(professorId);
-});
+export const getShadowHostId: PlasmoGetShadowHostId = () => "name-overlay";

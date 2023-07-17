@@ -9,6 +9,7 @@
   font-family: sans-serif;
   border-radius: 50%;
   margin: 0 5px;
+  color: black;
   background-color: gray;
   cursor: pointer;
 }
