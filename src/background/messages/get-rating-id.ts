@@ -1,4 +1,4 @@
-import ratings, { type ITeacherPage } from "@mtucourses/rate-my-professors";
+import ratings from "@mtucourses/rate-my-professors";
 
 import type { PlasmoMessaging } from "@plasmohq/messaging";
 
@@ -13,7 +13,6 @@ const handler: PlasmoMessaging.MessageHandler<
   ProfessorPage
 > = async (req, res) => {
   const professorId = req.body.professorId;
-  console.log("here");
 
   const foundProfessor = await ratings.getTeacher(professorId);
 

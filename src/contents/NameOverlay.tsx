@@ -1,12 +1,11 @@
 import { Box, createEmotionCache } from "@mantine/core";
-import { useClickOutside } from "@mantine/hooks";
+import { useClickOutside, useElementSize, useMergedRef } from "@mantine/hooks";
 import type {
   PlasmoCSUIProps,
   PlasmoGetOverlayAnchor,
   PlasmoGetShadowHostId
 } from "plasmo";
 import { type FC, useEffect, useState } from "react";
-import { useClickAway } from "react-use";
 
 import { OverlayCard } from "~components/OverlayCard";
 import { ThemeProvider } from "~theme";
@@ -27,11 +26,11 @@ const NameOverlay: FC<PlasmoCSUIProps> = () => {
   const [location, setLocation] = useState([0, 0]);
   const [visible, setVisible] = useState(false);
 
-  /*const ref = useRef(null);
-  useClickAway(ref, () => {
-    console.log("outside");
-    setVisible(false);
-  });*/
+  const { ref: sizeRef, width, height } = useElementSize();
+
+  useClickOutside(() => setVisible(false), null, [
+    document.querySelector("plasmo-csui")
+  ]);
 
   useEffect(() => {
     const hoverListener = (event: MouseEvent) => {
@@ -73,17 +72,17 @@ const NameOverlay: FC<PlasmoCSUIProps> = () => {
           bottom: "0px",
           pointerEvents: "none"
         }}>
-        {visible && (
-          <Box
-            sx={{
-              position: "absolute",
-              top: Math.min(location[0], window.innerHeight - 270),
-              left: Math.min(location[1] + 30, window.innerWidth - 310),
-              pointerEvents: "auto"
-            }}>
-            <OverlayCard professorId={id} onClose={() => setVisible(false)} />
-          </Box>
-        )}
+        <Box
+          sx={{
+            display: visible ? "block" : "none",
+            position: "absolute",
+            top: Math.min(location[0], window.innerHeight - height - 10),
+            left: Math.min(location[1] + 30, window.innerWidth - width - 10),
+            pointerEvents: "auto"
+          }}
+          ref={sizeRef}>
+          <OverlayCard professorId={id} onClose={() => setVisible(false)} />
+        </Box>
       </Box>
     </ThemeProvider>
   );

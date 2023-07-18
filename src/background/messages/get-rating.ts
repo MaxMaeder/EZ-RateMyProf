@@ -20,7 +20,6 @@ const handler: PlasmoMessaging.MessageHandler<
   console.log("here");
 
   const schools = await ratings.searchSchool(schoolName);
-  //if (schools.length === 0) throw new Error("No schools found!");
   if (schools.length === 0) return res.send(undefined);
 
   const schoolId = schools[0].id;
@@ -36,7 +35,6 @@ const handler: PlasmoMessaging.MessageHandler<
   }
 
   if (!foundProfessor) return res.send(undefined);
-  //throw new Error("No professor found matching: " + professorName);
 
   res.send(foundProfessor);
 };

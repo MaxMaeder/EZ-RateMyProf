@@ -1,4 +1,5 @@
 import { ActionIcon, Flex, Image, Paper } from "@mantine/core";
+import { useClickOutside } from "@mantine/hooks";
 import Logo from "data-base64:~assets/Logo.svg";
 import { useCallback, useEffect, useState } from "react";
 import { X as XIcon } from "tabler-icons-react";
@@ -38,8 +39,8 @@ const OverlayCard = ({ professorId, onClose }: OverlayCardProps) => {
   return (
     <Paper
       sx={{
-        width: "300px",
-        height: "260px",
+        width: "325px",
+        minHeight: "260px",
         padding: 12
       }}
       shadow="md">

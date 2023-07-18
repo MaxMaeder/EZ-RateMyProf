@@ -5,6 +5,7 @@ import styleText from "data-text:./style.css";
 import { debounce, isEmpty } from "lodash";
 
 import { sendToBackground } from "@plasmohq/messaging";
+import { Storage } from "@plasmohq/storage";
 
 import type { ProfessorPage } from "~background/messages/get-rating";
 
@@ -12,6 +13,8 @@ import { getRGColor, map } from "./util";
 
 const PROCEED_KEYWORDS = ["course", "schedule", "professor"];
 const TAG_BLACKLIST = ["STYLE", "SCRIPT", "NOSCRIPT", "BODY"];
+
+const storage = new Storage();
 
 const guessShouldProceed = () => {
   const pageText = document.body.innerText;
@@ -52,8 +55,10 @@ const getBadgeHtml = (professor: ProfessorPage): string => {
 };
 
 let memo: ProfessorPage[] = [];
-const loadPersonDetails = async (person: NLPFoundPerson) => {
-  //console.log("Top");
+const loadPersonDetails = async (
+  person: NLPFoundPerson,
+  university: string
+) => {
   const name = person.name;
   const nameParts = name.split(/\s+/);
 
@@ -63,32 +68,27 @@ const loadPersonDetails = async (person: NLPFoundPerson) => {
       firstName = firstName.toLowerCase();
       lastName = lastName.toLowerCase();
 
-      console.log(firstName, lastName, nameParts[0]);
       return firstName === nameParts[0] || lastName === nameParts[0];
     });
-    console.log("memo", professor, memo);
-    //professor = memo.get(name);
+  } else {
+    professor = memo.find(({ firstName, lastName }: ProfessorPage) => {
+      const fullName = firstName.toLowerCase() + " " + lastName.toLowerCase();
+      return fullName === name;
+    });
   }
 
   if (!professor) {
-    //console.log("before");
-    //try {
     professor = await sendToBackground({
       name: "get-rating",
       body: {
-        schoolName: "UW-Madison",
+        schoolName: university,
         professorName: name
       }
     });
-    /*} catch (e) {
-      return;
-    }*/
-    console.log(professor);
+
     if (!professor) return;
-    //console.log("after");
     memo.push(professor);
   }
-  //console.log("mid");
 
   let el = person.node.parentElement;
   let res = person.node.data;
@@ -99,18 +99,23 @@ const loadPersonDetails = async (person: NLPFoundPerson) => {
     res.slice(person.endIndex);
 
   if (el) el.innerHTML = res;
-  console.log("btm");
 };
 
 const formatName = (name: string) => {
-  return name
-    .toLowerCase()
-    .replace(/(\bprof\w*\b\.?|'s|\.)/, "")
-    .trim(); // + ` orig: "${name}"`
+  return (
+    name
+      .toLowerCase()
+      // Standardize spaces between words to single space
+      .replace(/\s\s+/g, " ")
+      // Remove titles like "professor" or "prof.", possessives, and punctuation
+      .replace(/(\bprof\w*\b\.?|'s|[,.!?;:])/, "")
+      .trim()
+  );
 };
 
 const updateProfRatings = async () => {
   console.log("PROCEEDING");
+  const university = await storage.get("key");
 
   let people: NLPFoundPerson[] = [];
   const treeWalker = getTxtTreeWalker();
@@ -138,10 +143,9 @@ const updateProfRatings = async () => {
   }
 
   people.sort((a, b) => b.name.length - a.name.length);
-  console.log(people);
 
   for (const person of people) {
-    await loadPersonDetails(person);
+    await loadPersonDetails(person, university);
   }
 };
 

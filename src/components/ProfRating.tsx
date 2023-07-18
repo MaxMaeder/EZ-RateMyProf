@@ -4,6 +4,7 @@ import {
   Flex,
   Group,
   Rating,
+  Stack,
   Text,
   Title
 } from "@mantine/core";
@@ -29,15 +30,19 @@ interface ProfRatingProps extends BoxProps {
 }
 
 const ProfRating = ({ professor, ...props }: ProfRatingProps) => {
+  const nRate = professor.numRatings;
+
   return (
     <Box {...props}>
       <Title order={1} sx={{ marginBottom: 5 }}>
         {`${professor.firstName} ${professor.lastName}`}
       </Title>
-      <Group spacing="xs">
+      <Stack spacing={0}>
         <Rating value={professor.avgRating} fractions={10} size="lg" readOnly />
-        <Text c="dimmed">{professor.avgRating}/5</Text>
-      </Group>
+        <Text c="dimmed">
+          {professor.avgRating}/5 ({nRate} rating{nRate !== 1 ? "s" : ""})
+        </Text>
+      </Stack>
       <Group grow mt="md" mb="md">
         <Stat
           value={`${professor.wouldTakeAgainPercent.toFixed(0)}%`}
