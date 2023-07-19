@@ -1,69 +1,76 @@
-import { ActionIcon, Flex, Image, Paper } from "@mantine/core";
-import { useClickOutside } from "@mantine/hooks";
+import { ActionIcon, Box, type BoxProps, Flex, Image } from "@mantine/core";
+import { useElementSize } from "@mantine/hooks";
 import Logo from "data-base64:~assets/Logo.svg";
-import { useCallback, useEffect, useState } from "react";
 import { X as XIcon } from "tabler-icons-react";
 
-import { sendToBackground } from "@plasmohq/messaging";
+type OverlayPosProps = {
+  top: number;
+  left: number;
+};
 
-import type { ProfessorPage } from "~background/messages/get-rating";
-import { ProfRating } from "~components/ProfRating";
-
-import { ProfProfileBtn } from "./ProfProfileBtn";
-
-interface OverlayCardProps {
-  professorId: string;
+interface OverlayCardProps extends BoxProps {
+  open: boolean;
   onClose: () => void;
+  position: OverlayPosProps | undefined;
+  pageGap: number; // Min space between overlay and edge of page, pixels
 }
 
-const OverlayCard = ({ professorId, onClose }: OverlayCardProps) => {
-  const [professor, setProfessor] = useState<ProfessorPage | undefined>();
+const OverlayCard = ({
+  open,
+  onClose,
+  position,
+  pageGap = 10,
+  sx,
+  children,
+  ...props
+}: OverlayCardProps) => {
+  const { ref: sizeRef, width, height } = useElementSize();
 
-  const getProfessor = useCallback(async (id: string) => {
-    const _prof = await sendToBackground({
-      name: "get-rating-id",
-      body: {
-        professorId: id
-      }
-    });
-    setProfessor(_prof);
-  }, []);
-
-  useEffect(() => {
-    setProfessor(undefined);
-    getProfessor(professorId);
-  }, [professorId]);
-
-  if (!professor) return <></>;
+  let positionStyles = {};
+  if (position) {
+    positionStyles = {
+      top: Math.min(position.top, window.innerHeight - height - pageGap),
+      left: Math.min(position.top, window.innerWidth - width - pageGap)
+    };
+  }
 
   return (
-    <Paper
+    <Box
       sx={{
-        width: "325px",
-        minHeight: "260px",
-        padding: 12
-      }}
-      shadow="md">
-      <Flex direction="column" sx={{ height: "100%" }}>
-        <Flex justify="space-between" align="center">
-          <Image
-            src={Logo}
-            fit="contain"
-            height="20px"
-            imageProps={{ style: { objectPosition: "left" } }}
-          />
-          <ActionIcon onClick={onClose}>
-            <XIcon size="20px" />
-          </ActionIcon>
+        position: "fixed",
+        top: "0px",
+        left: "0px",
+        right: "0px",
+        bottom: "0px",
+        pointerEvents: "none"
+      }}>
+      <Box
+        sx={{
+          display: open ? "block" : "none",
+          position: "absolute",
+          pointerEvents: "auto",
+          ...positionStyles,
+          ...sx
+        }}
+        ref={sizeRef}
+        {...props}>
+        <Flex direction="column" sx={{ height: "100%" }}>
+          <Flex justify="space-between" align="center">
+            <Image
+              src={Logo}
+              fit="contain"
+              height="20px"
+              imageProps={{ style: { objectPosition: "left" } }}
+            />
+            <ActionIcon onClick={onClose}>
+              <XIcon size="20px" />
+            </ActionIcon>
+          </Flex>
+          {children}
         </Flex>
-
-        <ProfRating professor={professor} sx={{ flex: 1 }} />
-
-        <Flex justify="end">
-          <ProfProfileBtn professor={professor} />
-        </Flex>
-      </Flex>
-    </Paper>
+      </Box>
+    </Box>
   );
 };
+
 export { OverlayCard };

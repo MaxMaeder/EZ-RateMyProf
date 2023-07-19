@@ -108,7 +108,7 @@ const formatName = (name: string) => {
       // Standardize spaces between words to single space
       .replace(/\s\s+/g, " ")
       // Remove titles like "professor" or "prof.", possessives, and punctuation
-      .replace(/(\bprof\w*\b\.?|'s|[,.!?;:])/, "")
+      .replace(/(\bprof\w*\b\.?|'s|[,.!?;:])/g, "")
       .trim()
   );
 };

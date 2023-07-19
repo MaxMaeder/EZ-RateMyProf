@@ -1,21 +1,20 @@
 import { Select } from "@mantine/core";
 import { useMemo } from "react";
 
+import { useStorage } from "@plasmohq/storage/hook";
+
 import { universities } from "~assets/universities";
 
-type UniversitySelectProps = {
-  value: string | undefined;
-  onChange: (v: string) => void;
-};
+const UniversitySelect = () => {
+  const [university, setUniversity] = useStorage("university");
 
-const UniversitySelect = ({ value, onChange }: UniversitySelectProps) => {
   const allUniversities = useMemo(() => {
     let _allUniv = [...new Set(universities)];
 
-    if (value && !_allUniv.includes(value)) _allUniv.push(value);
+    if (university && !_allUniv.includes(university)) _allUniv.push(university);
 
     return _allUniv;
-  }, [universities, value]);
+  }, [universities, university]);
 
   return (
     <Select
@@ -27,11 +26,11 @@ const UniversitySelect = ({ value, onChange }: UniversitySelectProps) => {
       getCreateLabel={(query) => `Other: '${query}'`}
       required
       data={allUniversities}
-      value={value}
+      value={university}
       maxDropdownHeight={150}
-      onChange={(u) => onChange(u)}
+      onChange={(u) => setUniversity(u)}
       onCreate={(u) => {
-        onChange(u);
+        setUniversity(u);
         return u;
       }}
     />

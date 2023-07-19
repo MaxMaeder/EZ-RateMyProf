@@ -13,7 +13,6 @@ import { useForm } from "react-hook-form";
 import { sendToBackground } from "@plasmohq/messaging";
 import { useStorage } from "@plasmohq/storage/hook";
 
-import { universities } from "~assets/universities";
 import type { ProfessorPage } from "~background/messages/get-rating";
 import { UniversitySelect } from "~components/UniversitySelect";
 import { ThemeProvider } from "~theme";
@@ -23,13 +22,10 @@ import { ProfessorView } from "./ProfessorView";
 import { SettingsView } from "./SettingsView";
 
 const Popup = () => {
-  const [university, setUniversity] = useStorage("university");
+  const [university] = useStorage("university");
+
   const [professor, setProfessor] = useState<ProfessorPage | undefined>();
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
-
-  let allUniversities = [...universities];
-  if (university && !allUniversities.includes(university))
-    allUniversities.push(university);
 
   const {
     register,
@@ -66,10 +62,7 @@ const Popup = () => {
           onClose={() => setSettingsOpen(false)}
         />
         <Stack spacing={0}>
-          <UniversitySelect
-            value={university}
-            onChange={(u) => setUniversity(u)}
-          />
+          <UniversitySelect />
           <Paper p="md" mt="md" shadow="md" withBorder>
             <form onSubmit={handleSubmit(onProfessorLookup)}>
               {/*<Overlay opacity={0.2} fixed />*/}

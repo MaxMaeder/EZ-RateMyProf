@@ -7,13 +7,13 @@ import type {
 } from "plasmo";
 import { type FC, useEffect, useState } from "react";
 
-import { OverlayCard } from "~components/OverlayCard";
+import { ProfCard } from "~components/ProfCard";
 import { ThemeProvider } from "~theme";
 
 const styleElement = document.createElement("style");
 
 const styleCache = createEmotionCache({
-  key: "plasmo-mantine-cache",
+  key: "rmp-cache-name-overlay",
   prepend: true,
   container: styleElement
 });
@@ -81,7 +81,7 @@ const NameOverlay: FC<PlasmoCSUIProps> = () => {
             pointerEvents: "auto"
           }}
           ref={sizeRef}>
-          <OverlayCard professorId={id} onClose={() => setVisible(false)} />
+          <ProfCard professorId={id} onClose={() => setVisible(false)} />
         </Box>
       </Box>
     </ThemeProvider>
