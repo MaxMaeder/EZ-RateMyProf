@@ -115,7 +115,7 @@ const formatName = (name: string) => {
 
 const updateProfRatings = async () => {
   console.log("PROCEEDING");
-  const university = await storage.get("key");
+  const university = await storage.get("university");
 
   let people: NLPFoundPerson[] = [];
   const treeWalker = getTxtTreeWalker();

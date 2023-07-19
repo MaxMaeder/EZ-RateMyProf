@@ -1,5 +1,5 @@
-import { Box, createEmotionCache } from "@mantine/core";
-import { useClickOutside, useElementSize, useMergedRef } from "@mantine/hooks";
+import { createEmotionCache } from "@mantine/core";
+import { useClickOutside, useDisclosure } from "@mantine/hooks";
 import type {
   PlasmoCSUIProps,
   PlasmoGetOverlayAnchor,
@@ -7,7 +7,8 @@ import type {
 } from "plasmo";
 import { type FC, useEffect, useState } from "react";
 
-import { ProfCard } from "~components/ProfCard";
+import { OverlayCard } from "~components/OverlayCard";
+import { ProfDetails } from "~components/ProfDetails";
 import { ThemeProvider } from "~theme";
 
 const styleElement = document.createElement("style");
@@ -24,12 +25,10 @@ const NameOverlay: FC<PlasmoCSUIProps> = () => {
   const [id, setId] = useState<string>("");
 
   const [location, setLocation] = useState([0, 0]);
-  const [visible, setVisible] = useState(false);
+  const [opened, { open, close }] = useDisclosure();
 
-  const { ref: sizeRef, width, height } = useElementSize();
-
-  useClickOutside(() => setVisible(false), null, [
-    document.querySelector("plasmo-csui")
+  useClickOutside(close, null, [
+    ...document.querySelectorAll<HTMLElement>("plasmo-csui")
   ]);
 
   useEffect(() => {
@@ -41,14 +40,12 @@ const NameOverlay: FC<PlasmoCSUIProps> = () => {
 
       setId(target.dataset.id || "");
 
-      const { left, top } = target.getBoundingClientRect();
+      const { top, left } = target.getBoundingClientRect();
       setLocation([top, left]);
-      setVisible(true);
+      open();
     };
 
-    const scrollListener = () => {
-      setVisible(false);
-    };
+    const scrollListener = () => close();
 
     document.body.addEventListener("mouseover", hoverListener);
     document.addEventListener("scroll", scrollListener);
@@ -63,27 +60,13 @@ const NameOverlay: FC<PlasmoCSUIProps> = () => {
 
   return (
     <ThemeProvider emotionCache={styleCache}>
-      <Box
-        sx={{
-          position: "fixed",
-          top: "0px",
-          left: "0px",
-          right: "0px",
-          bottom: "0px",
-          pointerEvents: "none"
-        }}>
-        <Box
-          sx={{
-            display: visible ? "block" : "none",
-            position: "absolute",
-            top: Math.min(location[0], window.innerHeight - height - 10),
-            left: Math.min(location[1] + 30, window.innerWidth - width - 10),
-            pointerEvents: "auto"
-          }}
-          ref={sizeRef}>
-          <ProfCard professorId={id} onClose={() => setVisible(false)} />
-        </Box>
-      </Box>
+      <OverlayCard
+        open={opened}
+        onClose={close}
+        position={{ top: location[0], left: location[1] + 30 }}
+        sx={{ width: "325px", minHeight: "260px" }}>
+        <ProfDetails professorId={id} />
+      </OverlayCard>
     </ThemeProvider>
   );
 };

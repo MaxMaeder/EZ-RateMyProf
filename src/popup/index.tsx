@@ -7,6 +7,7 @@ import {
   TextInput,
   Title
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -22,10 +23,11 @@ import { ProfessorView } from "./ProfessorView";
 import { SettingsView } from "./SettingsView";
 
 const Popup = () => {
-  const [university] = useStorage("university");
+  const [university, setUniversity] = useStorage("university");
 
   const [professor, setProfessor] = useState<ProfessorPage | undefined>();
-  const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
+  const [settingsOpened, { open: openSettings, close: closeSettings }] =
+    useDisclosure();
 
   const {
     register,
@@ -50,19 +52,17 @@ const Popup = () => {
 
   return (
     <ThemeProvider withNormalizeCSS withGlobalStyles>
-      <AppShell
-        header={<Header onSettingsOpen={() => setSettingsOpen(true)} />}
-        w={350}>
+      <AppShell header={<Header onSettingsOpen={openSettings} />} w={350}>
         <ProfessorView
           professor={professor}
           onClose={() => setProfessor(undefined)}
         />
-        <SettingsView
-          open={settingsOpen}
-          onClose={() => setSettingsOpen(false)}
-        />
+        <SettingsView open={settingsOpened} onClose={closeSettings} />
         <Stack spacing={0}>
-          <UniversitySelect />
+          <UniversitySelect
+            value={university}
+            onChange={(u) => setUniversity(u)}
+          />
           <Paper p="md" mt="md" shadow="md" withBorder>
             <form onSubmit={handleSubmit(onProfessorLookup)}>
               {/*<Overlay opacity={0.2} fixed />*/}

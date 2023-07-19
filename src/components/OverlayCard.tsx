@@ -1,7 +1,13 @@
-import { ActionIcon, Box, type BoxProps, Flex, Image } from "@mantine/core";
+import {
+  Box,
+  type BoxProps,
+  CloseButton,
+  Flex,
+  Image,
+  Paper
+} from "@mantine/core";
 import { useElementSize } from "@mantine/hooks";
 import Logo from "data-base64:~assets/Logo.svg";
-import { X as XIcon } from "tabler-icons-react";
 
 type OverlayPosProps = {
   top: number;
@@ -11,8 +17,8 @@ type OverlayPosProps = {
 interface OverlayCardProps extends BoxProps {
   open: boolean;
   onClose: () => void;
-  position: OverlayPosProps | undefined;
-  pageGap: number; // Min space between overlay and edge of page, pixels
+  position?: OverlayPosProps;
+  pageGap?: number; // Min space between overlay and edge of page, pixels
 }
 
 const OverlayCard = ({
@@ -30,7 +36,7 @@ const OverlayCard = ({
   if (position) {
     positionStyles = {
       top: Math.min(position.top, window.innerHeight - height - pageGap),
-      left: Math.min(position.top, window.innerWidth - width - pageGap)
+      left: Math.min(position.left, window.innerWidth - width - pageGap)
     };
   }
 
@@ -54,20 +60,21 @@ const OverlayCard = ({
         }}
         ref={sizeRef}
         {...props}>
-        <Flex direction="column" sx={{ height: "100%" }}>
-          <Flex justify="space-between" align="center">
-            <Image
-              src={Logo}
-              fit="contain"
-              height="20px"
-              imageProps={{ style: { objectPosition: "left" } }}
-            />
-            <ActionIcon onClick={onClose}>
-              <XIcon size="20px" />
-            </ActionIcon>
+        <Paper p="sm" shadow="md">
+          <Flex direction="column" sx={{ height: "100%" }}>
+            <Flex justify="space-between" align="center" mb="sm">
+              <Image
+                src={Logo}
+                fit="contain"
+                height="18px"
+                imageProps={{ style: { objectPosition: "left" } }}
+                alt="EZ-RateMyProf Logo"
+              />
+              <CloseButton onClick={onClose} />
+            </Flex>
+            {children}
           </Flex>
-          {children}
-        </Flex>
+        </Paper>
       </Box>
     </Box>
   );

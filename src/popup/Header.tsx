@@ -15,6 +15,7 @@ const Header = ({ onSettingsOpen }: HeaderType) => {
           fit="contain"
           height="30px"
           imageProps={{ style: { objectPosition: "left" } }}
+          alt="EZ-RateMyProf Logo"
         />
         <ActionIcon onClick={onSettingsOpen}>
           <SettingsIcon />
