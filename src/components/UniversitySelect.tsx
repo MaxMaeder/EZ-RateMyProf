@@ -1,14 +1,18 @@
-import { Select } from "@mantine/core";
+import { Select, type SelectProps } from "@mantine/core";
 import { useMemo } from "react";
 
-import { universities } from "~assets/universities";
+import { universities } from "~config/universities";
 
-type UniversitySelectProps = {
+interface UniversitySelectProps extends Omit<SelectProps, "data"> {
   value: string | undefined;
   onChange: (v: string) => void;
-};
+}
 
-const UniversitySelect = ({ value, onChange }: UniversitySelectProps) => {
+const UniversitySelect = ({
+  value,
+  onChange,
+  ...props
+}: UniversitySelectProps) => {
   const allUniversities = useMemo(() => {
     let _allUniv = [...new Set(universities)];
 
@@ -25,7 +29,6 @@ const UniversitySelect = ({ value, onChange }: UniversitySelectProps) => {
       clearable
       creatable
       getCreateLabel={(query) => `Other: '${query}'`}
-      required
       data={allUniversities}
       value={value}
       maxDropdownHeight={150}
@@ -34,6 +37,7 @@ const UniversitySelect = ({ value, onChange }: UniversitySelectProps) => {
         onChange(u);
         return u;
       }}
+      {...props}
     />
   );
 };

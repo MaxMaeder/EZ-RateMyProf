@@ -1,6 +1,8 @@
 import ratings, { type ITeacherPage } from "@mtucourses/rate-my-professors";
 
-import type { PlasmoMessaging } from "@plasmohq/messaging";
+import { type PlasmoMessaging, sendToContentScript } from "@plasmohq/messaging";
+
+import { showUnivOverlayMsg } from "~config/messages";
 
 interface ProfessorQuery {
   schoolName: string;
@@ -17,7 +19,14 @@ const handler: PlasmoMessaging.MessageHandler<
 > = async (req, res) => {
   const schoolName = req.body.schoolName;
   const professorName = req.body.professorName;
-  console.log("here");
+
+  if (!schoolName && professorName) {
+    sendToContentScript({
+      name: "UniversityOverlay",
+      body: showUnivOverlayMsg
+    });
+    return res.send(undefined);
+  }
 
   const schools = await ratings.searchSchool(schoolName);
   if (schools.length === 0) return res.send(undefined);

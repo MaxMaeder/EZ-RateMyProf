@@ -1,4 +1,4 @@
-import { Drawer, Group, Radio, Stack, Switch } from "@mantine/core";
+import { Button, Drawer, Group, Radio, Stack, Switch } from "@mantine/core";
 
 type SettingsViewType = {
   open: boolean;
@@ -34,6 +34,13 @@ const SettingsView = ({ open, onClose }: SettingsViewType) => {
             <Radio value="click" label="On all, expt..." />
           </Group>
         </Radio.Group>
+        <Button
+          onClick={() => {
+            chrome.storage.local.clear();
+            chrome.storage.sync.clear();
+          }}>
+          Reset
+        </Button>
       </Stack>
     </Drawer>
   );
