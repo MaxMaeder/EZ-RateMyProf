@@ -15,7 +15,8 @@ export const ThemeProvider = ({
     <MantineProvider
       emotionCache={emotionCache}
       theme={{
-        colorScheme: "dark"
+        colorScheme: "dark",
+        primaryColor: "teal"
       }}
       {...props}>
       {children}

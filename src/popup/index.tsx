@@ -1,9 +1,12 @@
 import {
   AppShell,
+  Box,
   Button,
   Modal,
+  Overlay,
   Paper,
   Stack,
+  Text,
   TextInput,
   Title
 } from "@mantine/core";
@@ -63,20 +66,21 @@ const Popup = () => {
             value={university}
             onChange={(u) => setUniversity(u)}
           />
-          <Paper p="md" mt="md" shadow="md" withBorder>
+          <Paper mt="md" shadow="md" withBorder>
             <form onSubmit={handleSubmit(onProfessorLookup)}>
-              {/*<Overlay opacity={0.2} fixed />*/}
-              <Title order={4} mb="xs">
-                Manually Search Professor
-              </Title>
-              <TextInput
-                label="Name"
-                mb="md"
-                {...register("name", { required: true })}
-              />
-              <Button type="submit" loading={isSubmitting} fullWidth>
-                Search
-              </Button>
+              <Box p="md">
+                <Title order={4} mb="xs">
+                  Manually Search Professor
+                </Title>
+                <TextInput
+                  label="Name"
+                  mb="md"
+                  {...register("name", { required: true })}
+                />
+                <Button type="submit" loading={isSubmitting} fullWidth>
+                  Search
+                </Button>
+              </Box>
             </form>
           </Paper>
         </Stack>

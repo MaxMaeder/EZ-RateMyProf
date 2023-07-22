@@ -3,11 +3,13 @@ import nlp from "compromise";
 import rateInlineText from "data-text:./rate-inline.html";
 import styleText from "data-text:./style.css";
 import { debounce, isEmpty } from "lodash";
+import { isMatch } from "matcher";
 
 import { sendToBackground } from "@plasmohq/messaging";
 import { Storage } from "@plasmohq/storage";
 
 import type { ProfessorPage } from "~background/messages/get-rating";
+import { type MatcherItem, getSettings } from "~hooks/useSettings";
 
 import { getRGColor, map } from "./util";
 
@@ -16,7 +18,27 @@ const TAG_BLACKLIST = ["STYLE", "SCRIPT", "NOSCRIPT", "BODY"];
 
 const storage = new Storage();
 
-const guessShouldProceed = () => {
+const guessShouldProceed = async () => {
+  const { showRatings, runOn, whitelist, blacklist } = await getSettings();
+  if (!showRatings.includes("webpages")) return false;
+
+  const matchesHost = (matcherList: MatcherItem[]) => {
+    const host = location.hostname;
+    const list = matcherList.map(({ pattern }) => pattern);
+    return isMatch(host, list);
+  };
+
+  switch (runOn) {
+    case "whitelist":
+      if (!matchesHost(whitelist)) return false;
+      break;
+    case "blacklist":
+      if (matchesHost(blacklist)) return false;
+      break;
+    case "auto":
+      break;
+  }
+
   const pageText = document.body.innerText;
   const matches = nlp(pageText).match(`~(${PROCEED_KEYWORDS.join("|")})~`);
   return matches.found;
@@ -151,8 +173,8 @@ const updateProfRatings = async () => {
 
 const db_updateProfRatings = debounce(updateProfRatings, 1000);
 
-const setUpRater = () => {
-  if (!guessShouldProceed()) return;
+const setUpRater = async () => {
+  if (!(await guessShouldProceed())) return;
   insertStyles();
   updateProfRatings();
 

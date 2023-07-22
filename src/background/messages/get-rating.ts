@@ -20,7 +20,7 @@ const handler: PlasmoMessaging.MessageHandler<
   const schoolName = req.body.schoolName;
   const professorName = req.body.professorName;
 
-  if (!schoolName && professorName) {
+  if (!schoolName) {
     sendToContentScript({
       name: "UniversityOverlay",
       body: showUnivOverlayMsg

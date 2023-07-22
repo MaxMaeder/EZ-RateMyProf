@@ -38,6 +38,9 @@ dependencies:
   lodash:
     specifier: ^4.17.21
     version: 4.17.21
+  matcher:
+    specifier: ^5.0.0
+    version: 5.0.0
   plasmo:
     specifier: 0.81.0
     version: 0.81.0(lodash@4.17.21)(react-dom@18.2.0)(react@18.2.0)
@@ -4740,6 +4743,13 @@ packages:
       semver: 5.7.1
     dev: false
     optional: true
+
+  /matcher@5.0.0:
+    resolution: {integrity: sha512-s2EMBOWtXFc8dgqvoAzKJXxNHibcdJMV0gwqKUaw9E2JBJuGUK7DrNKrA6g/i+v72TT16+6sVm5mS3thaMLQUw==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dependencies:
+      escape-string-regexp: 5.0.0
+    dev: false
 
   /mdn-data@2.0.14:
     resolution: {integrity: sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow==}
