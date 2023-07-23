@@ -1,4 +1,5 @@
 import { sendToBackground } from "@plasmohq/messaging";
+import { Storage } from "@plasmohq/storage";
 
 import type {
   ProfessorMemoItem,
@@ -8,7 +9,14 @@ import type {
 import type { NLPFoundPerson } from "./findPeople";
 import { getBadgeHtml } from "./inject";
 
+const storage = new Storage();
+
 let memo: ProfessorMemoItem[] = [];
+
+const isProfessorPage = (item: ProfessorMemoItem) => {
+  let page = item as ProfessorPage;
+  return page.firstName && page.lastName;
+};
 
 const loadPersonDetails = async (
   person: NLPFoundPerson,
@@ -16,26 +24,29 @@ const loadPersonDetails = async (
 ) => {
   const name = person.name;
   const nameParts = name.split(/\s+/);
+  console.log(memo);
 
   let professor: ProfessorMemoItem | undefined;
   if (nameParts.length === 1) {
     professor = memo.find((profCandidate) => {
       let profPage = profCandidate as ProfessorPage;
-      if (profPage.firstName && profPage.lastName) {
+
+      if (isProfessorPage(profPage)) {
         return (
           profPage.firstName.toLowerCase() === nameParts[0] ||
           profPage.lastName.toLowerCase() === nameParts[0]
         );
       }
 
-      return false;
+      return name === profPage.fullName;
     });
   } else {
     professor = memo.find(({ fullName }: ProfessorPage) => {
-      //const fullName = firstName.toLowerCase() + " " + lastName.toLowerCase();
       return fullName === name;
     });
   }
+
+  if (professor && !isProfessorPage(professor)) return;
 
   if (!professor) {
     professor = await sendToBackground({
@@ -70,15 +81,12 @@ const loadPersonDetails = async (
 };
 
 const handlePeople = async (people: NLPFoundPerson[]) => {
-  const storage = new Storage();
   const university = await storage.get("university");
 
   people.sort((a, b) => b.name.length - a.name.length);
 
   for (const person of people) {
-    try {
-      await loadPersonDetails(person, university);
-    } catch (e) {}
+    await loadPersonDetails(person, university);
   }
 };
 
