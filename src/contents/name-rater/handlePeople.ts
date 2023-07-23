@@ -2,7 +2,7 @@ import { sendToBackground } from "@plasmohq/messaging";
 import { Storage } from "@plasmohq/storage";
 
 import type {
-  ProfessorMemoItem as PersonMemoItem,
+  PersonMemoItem,
   ProfessorPage
 } from "~background/messages/get-rating";
 

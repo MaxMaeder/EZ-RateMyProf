@@ -9,11 +9,11 @@ type ProfessorQuery = {
   professorName: string;
 };
 
-interface ProfessorMemoItem {
+interface PersonMemoItem {
   fullName: string;
 }
 
-interface ProfessorPage extends ITeacherPage, ProfessorMemoItem {
+interface ProfessorPage extends ITeacherPage, PersonMemoItem {
   wouldTakeAgainPercent: number;
 }
 
@@ -59,4 +59,4 @@ const handler: PlasmoMessaging.MessageHandler<
 
 export default handler;
 
-export type { ProfessorMemoItem, ProfessorPage };
+export type { PersonMemoItem, ProfessorPage };
