@@ -10,8 +10,8 @@ import {
   TextInput,
   Title
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { useState } from "react";
+import { useDisclosure, useTimeout } from "@mantine/hooks";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { sendToBackground } from "@plasmohq/messaging";
@@ -32,6 +32,12 @@ const Popup = () => {
   const [settingsOpened, { open: openSettings, close: closeSettings }] =
     useDisclosure();
 
+  const submitRef = useRef<HTMLButtonElement>();
+  const { start, clear } = useTimeout(() => {
+    setSearchBtnTxt("Search");
+  }, 3000);
+  const [searchBtnTxt, setSearchBtnTxt] = useState<string>("Search");
+
   const {
     register,
     handleSubmit,
@@ -50,6 +56,14 @@ const Popup = () => {
         professorName: name
       }
     });
+
+    if (!_prof) {
+      clear();
+      start();
+      setSearchBtnTxt("Professor not found");
+      return;
+    }
+
     setProfessor(_prof);
   };
 
@@ -78,7 +92,7 @@ const Popup = () => {
                   {...register("name", { required: true })}
                 />
                 <Button type="submit" loading={isSubmitting} fullWidth>
-                  Search
+                  {searchBtnTxt}
                 </Button>
               </Box>
             </form>

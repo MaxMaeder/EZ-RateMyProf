@@ -4,12 +4,16 @@ import { type PlasmoMessaging, sendToContentScript } from "@plasmohq/messaging";
 
 import { showUnivOverlayMsg } from "~config/messages";
 
-interface ProfessorQuery {
+type ProfessorQuery = {
   schoolName: string;
   professorName: string;
+};
+
+interface ProfessorMemoItem {
+  fullName: string;
 }
 
-interface ProfessorPage extends ITeacherPage {
+interface ProfessorPage extends ITeacherPage, ProfessorMemoItem {
   wouldTakeAgainPercent: number;
 }
 
@@ -45,9 +49,14 @@ const handler: PlasmoMessaging.MessageHandler<
 
   if (!foundProfessor) return res.send(undefined);
 
+  foundProfessor.fullName =
+    foundProfessor.firstName.toLowerCase() +
+    " " +
+    foundProfessor.lastName.toLowerCase();
+
   res.send(foundProfessor);
 };
 
 export default handler;
 
-export type { ProfessorPage };
+export type { ProfessorMemoItem, ProfessorPage };

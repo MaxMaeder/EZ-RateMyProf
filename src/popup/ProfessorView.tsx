@@ -19,11 +19,9 @@ const ProfessorView = ({ professor, onClose }: ProfessorViewType) => {
       title="Professor Details"
       opened={true}
       onClose={onClose}>
-      <Flex direction="column" sx={{ height: "100%" }}>
-        <ProfRating professor={professor} sx={{ flex: 1 }} />
-        <Flex justify="end">
-          <ProfProfileBtn professor={professor} />
-        </Flex>
+      <ProfRating professor={professor} />
+      <Flex justify="end">
+        <ProfProfileBtn professor={professor} />
       </Flex>
     </Drawer>
   );

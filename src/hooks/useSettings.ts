@@ -1,7 +1,7 @@
 import { Storage } from "@plasmohq/storage";
 import { useStorage } from "@plasmohq/storage/hook";
 
-import { sensibleBlacklist } from "~config/constants";
+import { SENSIBLE_BLACKLIST } from "~config/constants";
 
 type ShowRatingsLocation = "webpages";
 type ShowDetailsType = "hover" | "click";
@@ -24,7 +24,7 @@ const defaultSettings: ExtensionSettings = {
   showDetails: "hover",
   runOn: "auto",
   whitelist: [],
-  blacklist: sensibleBlacklist
+  blacklist: SENSIBLE_BLACKLIST
 };
 
 const parseStoreSettings = (s: string): ExtensionSettings => {

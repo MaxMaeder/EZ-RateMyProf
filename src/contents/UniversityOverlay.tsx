@@ -12,7 +12,7 @@ import { useStorage } from "@plasmohq/storage/hook";
 
 import { OverlayCard } from "~components/OverlayCard";
 import { UniversitySelect } from "~components/UniversitySelect";
-import { timeBeforeReshow } from "~config/constants";
+import { TIME_BEFORE_RESHOW } from "~config/constants";
 import { showUnivOverlayMsg } from "~config/messages";
 import { ThemeProvider } from "~theme";
 
@@ -35,7 +35,7 @@ const UniversityOverlay: FC<PlasmoCSUIProps> = () => {
   const shouldShowAgain = useCallback(() => {
     let currTime = Date.now();
     let lastTime = Number.parseInt(lastShown) || 0;
-    let showAgain = currTime - lastTime > timeBeforeReshow;
+    let showAgain = currTime - lastTime > TIME_BEFORE_RESHOW;
 
     if (showAgain) setLastShown(currTime);
 
