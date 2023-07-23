@@ -32,11 +32,10 @@ const Popup = () => {
   const [settingsOpened, { open: openSettings, close: closeSettings }] =
     useDisclosure();
 
-  const submitRef = useRef<HTMLButtonElement>();
-  const { start, clear } = useTimeout(() => {
-    setSearchBtnTxt("Search");
+  const { start: startSchTmout, clear: clearSchTmout } = useTimeout(() => {
+    setSchBtnTxt("Search");
   }, 3000);
-  const [searchBtnTxt, setSearchBtnTxt] = useState<string>("Search");
+  const [schBtnTxt, setSchBtnTxt] = useState<string>("Search");
 
   const {
     register,
@@ -58,9 +57,9 @@ const Popup = () => {
     });
 
     if (!_prof) {
-      clear();
-      start();
-      setSearchBtnTxt("Professor not found");
+      clearSchTmout();
+      startSchTmout();
+      setSchBtnTxt("Professor not found");
       return;
     }
 
@@ -92,7 +91,7 @@ const Popup = () => {
                   {...register("name", { required: true })}
                 />
                 <Button type="submit" loading={isSubmitting} fullWidth>
-                  {searchBtnTxt}
+                  {schBtnTxt}
                 </Button>
               </Box>
             </form>

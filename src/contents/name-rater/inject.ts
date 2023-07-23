@@ -11,7 +11,6 @@ const insertStyles = () => {
 };
 
 const getBadgeHtml = (professor: ProfessorPage): string => {
-  console.log(professor);
   const rating = professor.avgRating;
   const color = getRGColor(map(rating, 0, 5, 1, 0));
 

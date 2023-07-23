@@ -19,7 +19,7 @@ type ExtensionSettings = {
   blacklist: MatcherItem[];
 };
 
-const defaultSettings: ExtensionSettings = {
+export const defaultSettings: ExtensionSettings = {
   showRatings: ["webpages"],
   showDetails: "hover",
   runOn: "auto",
@@ -44,7 +44,6 @@ const useSettings = (): [ExtensionSettings, (s: ExtensionSettings) => void] => {
   const settings = parseStoreSettings(settingsStore);
 
   const setSettings = (s: ExtensionSettings) => {
-    //console.log("writing");
     setSettingsStore(JSON.stringify(s));
   };
 
@@ -58,6 +57,12 @@ const getSettings = async (): Promise<ExtensionSettings> => {
   return parseStoreSettings(settingsStore);
 };
 
+const setSettings = async (s: ExtensionSettings) => {
+  const storage = new Storage();
+
+  await storage.set("settings", JSON.stringify(s));
+};
+
 export type {
   ShowRatingsLocation,
   ShowDetailsType,
@@ -66,4 +71,4 @@ export type {
   ExtensionSettings
 };
 
-export { useSettings, getSettings };
+export { useSettings, getSettings, setSettings };

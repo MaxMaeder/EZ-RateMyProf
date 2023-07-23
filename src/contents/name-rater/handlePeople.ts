@@ -2,7 +2,7 @@ import { sendToBackground } from "@plasmohq/messaging";
 import { Storage } from "@plasmohq/storage";
 
 import type {
-  ProfessorMemoItem,
+  ProfessorMemoItem as PersonMemoItem,
   ProfessorPage
 } from "~background/messages/get-rating";
 
@@ -11,9 +11,9 @@ import { getBadgeHtml } from "./inject";
 
 const storage = new Storage();
 
-let memo: ProfessorMemoItem[] = [];
+let memo: PersonMemoItem[] = [];
 
-const isProfessorPage = (item: ProfessorMemoItem) => {
+const isProfessorPage = (item: PersonMemoItem) => {
   let page = item as ProfessorPage;
   return page.firstName && page.lastName;
 };
@@ -24,9 +24,8 @@ const loadPersonDetails = async (
 ) => {
   const name = person.name;
   const nameParts = name.split(/\s+/);
-  console.log(memo);
 
-  let professor: ProfessorMemoItem | undefined;
+  let professor: PersonMemoItem | undefined;
   if (nameParts.length === 1) {
     professor = memo.find((profCandidate) => {
       let profPage = profCandidate as ProfessorPage;
@@ -58,7 +57,7 @@ const loadPersonDetails = async (
     });
 
     if (!professor) {
-      let nonExistentProf: ProfessorMemoItem = {
+      let nonExistentProf: PersonMemoItem = {
         fullName: name
       };
 

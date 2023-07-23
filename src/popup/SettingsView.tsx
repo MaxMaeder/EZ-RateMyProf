@@ -1,10 +1,7 @@
 import {
   Anchor,
-  Box,
-  Button,
   Drawer,
   Group,
-  Overlay,
   Paper,
   Radio,
   Stack,
@@ -21,7 +18,9 @@ import {
   type ExtensionSettings,
   type RunOnType,
   type ShowRatingsLocation,
-  useSettings
+  defaultSettings,
+  getSettings,
+  setSettings
 } from "~hooks/useSettings";
 
 type SettingsViewType = {
@@ -30,31 +29,28 @@ type SettingsViewType = {
 };
 
 const SettingsView = ({ open, onClose }: SettingsViewType) => {
-  const [settings, setSettings] = useSettings();
-
   const {
     handleSubmit,
     watch,
     control,
     reset: resetForm
   } = useForm({
-    values: settings as any
+    defaultValues: async () => (await getSettings()) as any
   });
+
   const onSubmit = (data: ExtensionSettings) => setSettings(data);
   useEffect(() => {
-    const subscription = watch(() => {
-      handleSubmit(onSubmit)();
-    });
+    const subscription = watch(() => handleSubmit(onSubmit)());
     return () => subscription.unsubscribe();
   }, []);
 
   const clearStorage = useCallback(async () => {
     const storage = new Storage();
     await storage.clear();
-    resetForm();
+    resetForm(defaultSettings);
   }, []);
 
-  const showRatings = watch("showRatings") as ShowRatingsLocation[];
+  const showRatings = (watch("showRatings") || []) as ShowRatingsLocation[];
   const webpEn = showRatings.includes("webpages");
 
   if (!open) return null;
@@ -138,9 +134,19 @@ const SettingsView = ({ open, onClose }: SettingsViewType) => {
           <RunOnList />
           <Paper withBorder p="xs" mt="md">
             <Text c="dimmed" align="center">
-              Made by <Anchor color="dimmed">Max Maeder</Anchor>
+              Made by{" "}
+              <Anchor
+                color="dimmed"
+                href="https://www.linkedin.com/in/maxmaeder/"
+                target="_blank">
+                Max Maeder
+              </Anchor>
               <Text span display="block" mt="xs">
-                <Anchor target="_blank">❤️ Rate</Anchor>
+                <Anchor
+                  href="https://github.com/MaxMaeder/EZ-RateMyProf"
+                  target="_blank">
+                  GitHub
+                </Anchor>
                 {" · "}
                 <Anchor onClick={clearStorage}>Reset Data</Anchor>
               </Text>
