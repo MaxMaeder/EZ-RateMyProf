@@ -1,8 +1,8 @@
 {
   "name": "rmp-ext",
-  "displayName": "Rmp ext",
-  "version": "0.0.1",
-  "description": "A basic Plasmo extension.",
+  "displayName": "EZ-RateMyProf",
+  "version": "1.0.1",
+  "description": "Automatically displays RateMyProfessor scores on all websites.",
   "author": "MaxMaeder",
   "scripts": {
     "dev": "plasmo dev",

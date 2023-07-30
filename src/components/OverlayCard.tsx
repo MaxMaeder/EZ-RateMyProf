@@ -41,18 +41,15 @@ const OverlayCard = ({
   }
 
   return (
-    <Box
-      sx={{
+    <div
+      style={{
+        visibility: open ? "visible" : "hidden",
         position: "fixed",
-        top: "0px",
-        left: "0px",
-        right: "0px",
-        bottom: "0px",
+        inset: 0,
         pointerEvents: "none"
       }}>
       <Box
         sx={{
-          display: open ? "block" : "none",
           position: "absolute",
           pointerEvents: "auto",
           ...positionStyles,
@@ -76,7 +73,7 @@ const OverlayCard = ({
           </Flex>
         </Paper>
       </Box>
-    </Box>
+    </div>
   );
 };
 

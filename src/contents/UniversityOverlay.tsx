@@ -5,7 +5,7 @@ import type {
   PlasmoGetOverlayAnchor,
   PlasmoGetShadowHostId
 } from "plasmo";
-import { type FC, useCallback, useEffect } from "react";
+import { type FC, useCallback } from "react";
 
 import { useMessage } from "@plasmohq/messaging/hook";
 import { useStorage } from "@plasmohq/storage/hook";
