@@ -1,7 +1,7 @@
 {
   "name": "rmp-ext",
   "displayName": "EZ-RateMyProf",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Automatically displays RateMyProfessor scores on all websites.",
   "author": "MaxMaeder",
   "scripts": {
