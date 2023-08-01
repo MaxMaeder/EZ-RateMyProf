@@ -32,6 +32,8 @@ const handler: PlasmoMessaging.MessageHandler<
     return res.send(undefined);
   }
 
+  if (professorName.split(" ").length < 2) return res.send(undefined);
+
   const schools = await ratings.searchSchool(schoolName);
   if (schools.length === 0) return res.send(undefined);
 

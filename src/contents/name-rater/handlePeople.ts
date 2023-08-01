@@ -23,7 +23,7 @@ const loadPersonDetails = async (
   university: string
 ) => {
   const name = person.name;
-  const nameParts = name.split(/\s+/);
+  const nameParts = name.split(" ");
 
   let professor: PersonMemoItem | undefined;
   if (nameParts.length === 1) {
