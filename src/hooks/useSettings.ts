@@ -1,7 +1,7 @@
 import { Storage } from "@plasmohq/storage";
 import { useStorage } from "@plasmohq/storage/hook";
 
-import { SENSIBLE_BLACKLIST } from "~config/constants";
+import { DEFAULT_SETTINGS } from "~config/constants";
 
 type ShowRatingsLocation = "webpages";
 type ShowDetailsType = "hover" | "click";
@@ -19,19 +19,11 @@ type ExtensionSettings = {
   blacklist: MatcherItem[];
 };
 
-export const defaultSettings: ExtensionSettings = {
-  showRatings: ["webpages"],
-  showDetails: "hover",
-  runOn: "auto",
-  whitelist: [],
-  blacklist: SENSIBLE_BLACKLIST
-};
-
 const parseStoreSettings = (s: string): ExtensionSettings => {
   const userSettings = JSON.parse(s || "{}");
 
   const settings: ExtensionSettings = Object.assign(
-    { ...defaultSettings },
+    { ...DEFAULT_SETTINGS },
     userSettings
   );
 

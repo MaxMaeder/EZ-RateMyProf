@@ -14,11 +14,11 @@ import { Controller, useForm } from "react-hook-form";
 import { Storage } from "@plasmohq/storage";
 
 import { MatcherList } from "~components/MatcherList";
+import { DEFAULT_SETTINGS } from "~config/constants";
 import {
   type ExtensionSettings,
   type RunOnType,
   type ShowRatingsLocation,
-  defaultSettings,
   getSettings,
   setSettings
 } from "~hooks/useSettings";
@@ -47,7 +47,7 @@ const SettingsView = ({ open, onClose }: SettingsViewType) => {
   const clearStorage = useCallback(async () => {
     const storage = new Storage();
     await storage.clear();
-    resetForm(defaultSettings);
+    resetForm(DEFAULT_SETTINGS);
   }, []);
 
   const showRatings = (watch("showRatings") || []) as ShowRatingsLocation[];
@@ -104,8 +104,8 @@ const SettingsView = ({ open, onClose }: SettingsViewType) => {
             render={({ field }) => (
               <Radio.Group label="Show more professor details..." {...field}>
                 <Group mt="xs">
-                  <Radio value="hover" label="On hover" disabled={!webpEn} />
                   <Radio value="click" label="On click" disabled={!webpEn} />
+                  <Radio value="hover" label="On hover" disabled={!webpEn} />
                 </Group>
               </Radio.Group>
             )}
