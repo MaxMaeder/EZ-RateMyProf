@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
-    "package": "plasmo package"
+    "package": "pnpm build --zip"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -16,9 +16,6 @@
     "@mtucourses/rate-my-professors": "^2.2.1",
     "@plasmohq/messaging": "^0.5.0",
     "@plasmohq/storage": "^1.7.0",
-    "@vespaiach/axios-fetch-adapter": "^0.3.1",
-    "axios": "^0.27.2",
-    "cheerio": "1.0.0-rc.12",
     "compromise": "^14.9.0",
     "matcher": "^5.0.0",
     "plasmo": "0.81.0",
